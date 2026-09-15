@@ -12,9 +12,15 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Extract project
+      - name: Extract project (auto-detect zip filename)
         run: |
-          unzip -o NaotEilitZmanim-project.zip -d extracted
+          ZIPFILE=$(find . -maxdepth 1 -iname "*.zip" | head -n 1)
+          echo "Using zip file: $ZIPFILE"
+          if [ -z "$ZIPFILE" ]; then
+            echo "No zip file found at repo root!"
+            exit 1
+          fi
+          unzip -o "$ZIPFILE" -d extracted
           cp -r extracted/NaotEilitZmanim/* .
           rm -rf extracted
 
